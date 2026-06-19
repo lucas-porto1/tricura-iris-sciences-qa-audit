@@ -97,8 +97,8 @@ Install the following before running the tests:
 Clone the repository:
 
 ```bash
-git clone <repository-url>
-cd <repository-name>
+git clone https://github.com/lucas-porto1/tricura-iris-sciences-qa-audit
+cd tricura-iris-sciences-qa-audit
 ```
 
 Install dependencies:
