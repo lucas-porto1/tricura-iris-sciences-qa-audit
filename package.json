@@ -1,0 +1,19 @@
+{
+  "name": "iris-sciences-qa-evaluation",
+  "version": "1.0.0",
+  "description": "QA evaluation for Iris Sciences Operational Console",
+  "scripts": {
+    "test": "playwright test",
+    "test:api": "playwright test tests/api",
+    "test:ui": "playwright test tests/ui",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "latest",
+    "@types/node": "^25.9.3",
+    "dotenv": "latest",
+    "typescript": "latest"
+  }
+}
