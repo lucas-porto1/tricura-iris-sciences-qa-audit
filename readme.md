@@ -19,18 +19,21 @@ The goal of this evaluation was to audit the deployed Iris Sciences system as an
 │   │   ├── authorization.spec.ts
 │   │   ├── legacy-console.spec.ts
 │   │   ├── qe-index.spec.ts
-│   │   └── sessions.spec.ts
+│   │   ├── sessions.spec.ts
+│   │   └── subjects.spec.ts
 │   ├── support/
 │   │   ├── apiClient.ts
 │   │   └── testData.ts
 │   └── ui/
+│       └── public-site.spec.ts
 ├── AUDIT.md
 ├── README.md
 ├── package.json
 ├── package-lock.json
 ├── playwright.config.ts
 ├── tsconfig.json
-└── .env.example
+├── .env.example
+└── .gitignore
 ```
 
 ## Deliverables
@@ -39,7 +42,7 @@ The goal of this evaluation was to audit the deployed Iris Sciences system as an
 
 The automated tests are implemented using **Playwright + TypeScript**.
 
-The suite focuses on findings that were classified as regression-worthy in `AUDIT.md`. The goal is not to provide a full happy-path test suite for the entire product, but to cover selected defects with clear business, security, or data-integrity impact.
+The suite focuses on findings classified as regression-worthy in `AUDIT.md`. The goal is not to provide a full happy-path test suite for the entire product, but to cover selected defects with clear business, security, or data-integrity impact.
 
 The main automated coverage areas are:
 
@@ -48,12 +51,13 @@ The main automated coverage areas are:
 * credential-bearing audit attachment exposure
 * legacy console access control
 * session lifecycle enforcement
+* subject-record availability
 * Quarterly Enrichment Index correctness
-* selected UI regressions for high-value user-facing defects
+* selected UI smoke coverage for public-facing defects
 
 Most regression coverage is API-level because the selected findings are primarily backend authorization, access control, or business-rule issues. API tests provide more direct and reliable validation for those risks than UI-only tests.
 
-UI tests are intentionally limited to cases where the browser-facing behavior is important to the finding, such as public-facing display issues or critical user-visible flows. Lower-priority cosmetic issues and fragile navigation checks were not selected for regression coverage.
+UI tests are intentionally limited to public-facing behavior where browser validation adds value, such as the homepage QE Index and public routes linked from the homepage.
 
 Some tests are marked with `test.fail()` because they assert the expected corrected behavior for confirmed defects documented in `AUDIT.md`. These tests are intentionally included as regression coverage for known issues. If the application is fixed, those tests will become unexpected passes and the `test.fail()` annotation should be removed.
 
@@ -150,6 +154,18 @@ Run tests in headed mode:
 npm run test:headed
 ```
 
+Run tests in debug mode:
+
+```bash
+npm run test:debug
+```
+
+Run TypeScript validation:
+
+```bash
+npm run typecheck
+```
+
 Generate and open the Playwright HTML report:
 
 ```bash
@@ -166,13 +182,18 @@ Regression coverage was selected for findings that affect:
 * privilege escalation
 * sensitive internal documents
 * core workflow integrity
+* subject data availability
 * calculation/reporting correctness
 * selected high-value user-facing behavior
 
-Not every observed behavior was automated. Minor visual issues, ambiguous observations, low-risk public navigation issues, and findings without a reliable automation oracle were documented or triaged in `AUDIT.md`, but intentionally excluded from the automated suite.
+Not every observed behavior was automated. Minor visual issues, ambiguous observations, low-risk usability issues, and findings without a reliable automation oracle were documented or triaged in `AUDIT.md`, but intentionally excluded from the automated suite.
+
+API tests were prioritized for backend authorization and workflow integrity. UI tests were kept intentionally small and focused on public-facing defects with clear pass/fail criteria.
 
 ## Notes for Reviewers
 
 The test suite requires a valid case token provided for the assessment. The token should be configured locally through `.env` using the `CASE_TOKEN` variable.
 
 The committed `.env.example` file documents the required configuration shape without exposing private values.
+
+Local folders such as `node_modules/`, `playwright-report/`, and `test-results/` are intentionally ignored and should not be committed.
