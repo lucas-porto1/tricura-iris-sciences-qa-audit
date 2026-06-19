@@ -6,6 +6,13 @@ The evaluated application is the **Iris Sciences Operational Console**, an inter
 
 The goal of this evaluation was to audit the deployed Iris Sciences system as an independent QA reviewer by identifying defects, assessing severity, deciding which findings are regression-worthy, and providing automated regression coverage for selected issues.
 
+The automated suite includes Playwright tests for confirmed defects found during the audit. Some tests intentionally use `test.fail()` because they assert the expected corrected behavior while the deployed application still contains those defects.
+
+> [!IMPORTANT]
+> Several tests in this repository intentionally use Playwright's `test.fail()` annotation.
+> These tests validate confirmed defects found during the audit and assert the expected corrected behavior.
+> They are expected failures while the deployed application still contains those defects.
+
 ## Contents
 
 ```text
@@ -59,8 +66,6 @@ Most regression coverage is API-level because the selected findings are primaril
 
 UI tests are intentionally limited to public-facing behavior where browser validation adds value, such as the homepage QE Index and public routes linked from the homepage.
 
-Some tests are marked with `test.fail()` because they assert the expected corrected behavior for confirmed defects documented in `AUDIT.md`. These tests are intentionally included as regression coverage for known issues. If the application is fixed, those tests will become unexpected passes and the `test.fail()` annotation should be removed.
-
 ### Audit Memo
 
 The full audit memo is available in:
@@ -84,6 +89,20 @@ A reward disbursement notice was discovered during the engagement and is include
 artifacts/reward-disbursement-notice.pdf
 artifacts/reward-disbursement-notice.png
 ```
+
+## Important: Expected Failures
+
+Several tests in this repository use Playwright's `test.fail()` annotation.
+
+This is intentional.
+
+The automated suite was written as regression coverage for confirmed defects found during the audit. These tests assert the **expected corrected behavior**, not the current broken behavior.
+
+Because the deployed application still contains those defects, the related tests are expected to fail until the application is fixed.
+
+In Playwright, tests marked with `test.fail()` are treated as **expected failures**. If the application is fixed and one of these tests starts passing, Playwright will report it as an **unexpected pass**. That is the signal that the defect was fixed and the `test.fail()` annotation should be removed.
+
+This approach keeps the tests useful as future regression coverage while clearly documenting the current product defects.
 
 ## Prerequisites
 
@@ -158,12 +177,6 @@ Run tests in debug mode:
 
 ```bash
 npm run test:debug
-```
-
-Run TypeScript validation:
-
-```bash
-npm run typecheck
 ```
 
 Generate and open the Playwright HTML report:
